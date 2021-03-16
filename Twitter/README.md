@@ -5,5 +5,6 @@ We are interested in a daily monitoring of
 * Followees
 * Written Posts
 * (Interactions)
+
 of all accounts in an id list
 
