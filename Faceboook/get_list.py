@@ -38,9 +38,10 @@ def ct_get_lists(list_id, count, access_token):
 
             continue
 
-        elif(status == 200 & accounts_count != 0):
+        elif(status == 200):
 
             accounts = data_frame['result.accounts']
+            print(accounts)
             all_accounts = pd.concat([all_accounts, accounts])
 
             query = data_frame['result.pagination.nextPage']
@@ -58,5 +59,6 @@ if __name__ == "__main__":
     access_token = "xVwti7hHe2SYdVSGyDJ42TCSms7XvmStrWVIy41b"
     count = 1000
     accounts_df = ct_get_lists(list_id, count, access_token)
-    file_name = str(date.today()) + ".csv"
-    accounts_df.to_csv(file_name)
+    #print(accounts_df)
+    #file_name = str(date.today()) + ".csv"
+    #accounts_df.to_csv(file_name)
