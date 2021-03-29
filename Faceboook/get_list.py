@@ -59,4 +59,4 @@ if __name__ == "__main__":
     count = 1000
     accounts_df = ct_get_lists(list_id, count, access_token)
     file_name = str(date.today()) + ".csv"
-    accounts_df.to_csv(file_name, encoding='utf-8')
+    accounts_df.to_csv(file_name)
