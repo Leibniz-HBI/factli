@@ -132,3 +132,6 @@ dmypy.json
 # Project specific stuff
 Facebook/data/
 Twitter/data/
+
+# VSCode project settings
+.vscode

@@ -27,7 +27,8 @@ def ct_get_lists(list_id, count, access_token):
             #print(normalized_json)
             data_frame = pd.DataFrame.from_dict(normalized_json, orient = "columns")
             
-        
+            data_frame['id'] = data_frame['id'].astype(str)
+            
             pd.set_option('display.max_columns', None)  
             pd.set_option('display.max_rows', None)  
             pd.set_option('display.max_colwidth', None) 
