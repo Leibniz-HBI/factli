@@ -10,8 +10,8 @@ logging.basicConfig(filename='posts.log', level=logging.DEBUG)
 def ct_get_posts(list_id, count, access_token):
     
     all_posts = pd.DataFrame(columns=[''])
-    start_date = '2021-04-02'
-    end_date = '2021-04-03'
+    start_date = '2021-04-11'
+    end_date = '2021-04-12'
     query = 'https://api.crowdtangle.com/' + '/posts?token=' + str(access_token) + '&listIds=' + str(list_id)  + '&startDate=' + start_date + '&endDate=' + end_date + '&count=' + str(count) 
     
     
@@ -37,7 +37,7 @@ def ct_get_posts(list_id, count, access_token):
         
             normalized_json = pd.json_normalize(json_response['result']['posts'])
             logging.debug(normalized_json)
-            data_frame = pd.DataFrame.from_dict(normalized_json, orient = "columns").astype(str)
+            data_frame = pd.DataFrame.from_dict(normalized_json, orient = "columns").astype({'account.id': str})
             
             #data_frame['id'] = data_frame['id'].astype(str)
             
