@@ -4,8 +4,6 @@ import pandas as pd
 from datetime import date
 from loguru import logger
 
-logging.basicConfig(filename='posts.log', level=logging.DEBUG)
-
 
 def ct_get_posts(list_id, count, access_token):
     '''
@@ -39,25 +37,23 @@ def ct_get_posts(list_id, count, access_token):
                 time.sleep(60)
 
                 continue
-            logging.debug(json_response)
+            logger.debug(json_response)
             next_Page_url = json_response['result']['pagination']['nextPage']
 
             normalized_json = pd.json_normalize(
                 json_response['result']['posts'])
-            logging.debug(normalized_json)
+            logger.debug(normalized_json)
             data_frame = pd.DataFrame.from_dict(
                 normalized_json, orient="columns", dtype=str)
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_colwidth', None)
 
-            logging.debug(data_frame)
-
             posts_count = len(data_frame)
-            logging.debug(posts_count)
+            logger.debug(posts_count)
 
             status = r.status_code
-            logging.debug(status)
+            logger.debug(status)
 
             if(status == 200 and posts_count != 0):
 
@@ -71,7 +67,7 @@ def ct_get_posts(list_id, count, access_token):
 
         except KeyError:
             print("No next page")
-            logging.debug(json_response)
+
             break
 
     return(all_posts)
@@ -85,8 +81,6 @@ if __name__ == "__main__":
     posts_df = ct_get_posts(list_id, count, access_token)
 
     df = posts_df.groupby(['account.id']).count()[['id']]
-
-    logging.debug(df)
     df_new = df.rename(
         columns={'account.id': 'User IDs', 'id': 'Number of Posts'})
     file_name = str(date.today()) + ".csv"
