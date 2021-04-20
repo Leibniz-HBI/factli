@@ -45,6 +45,12 @@ You can execute the application within the shell with:
 ```
 python main.py
 ```
+### Packages Required
+Pandas
+```
+pipenv install pandas
+```
+
 ### Querying CrowdTangle Endpoint and extracting the JSON response
 Generate your own Access Token( Don't share it with anyone) from the CrowdTangle website.
 ```
