@@ -91,10 +91,6 @@ python -m unittest -v test/mytest.py
 
 Create a python file containing unittest with the name `test_*.py` within the `test` directory.
 
----
-
-This application is programmed as a part of the [Social Media Observatory of the Lebniz Institut of Media research | Hans Bredow Institut](https://leibniz-hbi.github.io/SMO/) 
-
 # Run tests
 
 ```
