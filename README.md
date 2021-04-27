@@ -55,7 +55,7 @@ pipenv install pandas
 ```
 usage: number_of_posts.py [-h] -l  [-a] [-s] [-e]
 
-Retreive list of accounts
+Retrieve list of accounts
 
 optional arguments:
   -h, --help            show this help message and exit
