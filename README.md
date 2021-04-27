@@ -51,25 +51,30 @@ Pandas
 pipenv install pandas
 ```
 
-### Querying CrowdTangle Endpoint and extracting the JSON response
-Generate your own Access Token( Don't share it with anyone) from the CrowdTangle website.
+### Usage (Number of Posts)
 ```
-query = 'https://api.crowdtangle.com/lists/' + \
-        str(list_id) + '/accounts?token=' + \
-        str(access_token) + '&count=' + str(count)
-r = requests.get(query)
-json_response = r.json()
-```
-### Converting JSON response into a Readable Format
-```
-normalized_json = pd.json_normalize(json_response['result']['accounts'])
+usage: number_of_posts.py [-h] -l  [-a] [-s] [-e]
 
-data_frame = pd.DataFrame.from_dict(normalized_json, orient="columns", dtype=str)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_colwidth', None)
-```
+Retreive list of accounts
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -l , --list_id        Saved List ID
+  -a , --access_token   Your unique access token
+  -s , --start_date     Start Date (older), Format=YYYY-MM-DD
+  -e , --end_date       End Date(newer), Format=YYYY-MM-DD
+```
+### Usage (List of Account IDs)
+```
+usage: get_list.py [-h] -l  [-a]
+
+Retreive list of accounts
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l , --list_id        Saved List ID
+  -a , --access_token   Your unique access token
+```
 ### Creating and Saving the CSV File
 ```
 file_name = str(date.today()) + ".csv"
