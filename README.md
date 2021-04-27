@@ -68,7 +68,7 @@ optional arguments:
 ```
 usage: get_list.py [-h] -l  [-a]
 
-Retreive list of accounts
+Retrieve list of accounts
 
 optional arguments:
   -h, --help            show this help message and exit
