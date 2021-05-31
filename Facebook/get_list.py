@@ -3,8 +3,14 @@ import time
 import pandas as pd
 from datetime import date
 from loguru import logger
+import Access_Token
+import click
 
 
+@click.command()
+@click.option('--list_id', help='Saved List ID')
+@click.option('--count', default=100, help='Number of accounts returned per call')
+@click.option('--access_token', help='Your unique access token')
 def ct_get_lists(list_id, count, access_token):
     '''
     This function generates a data frame containing all the
@@ -15,8 +21,11 @@ def ct_get_lists(list_id, count, access_token):
         count (int): The number of accounts to be returned per API request.
         access_token(str): The access token associated with your CrowdTangle account
 
-    Returns: Complete data frame containing all the accounts
+    Returns: Complete data frame containing all the accounts.
+                 Example(headers):   id(str), name(str), handle(str)......
     '''
+    if access_token is None:
+        access_token = Access_Token.access_token
 
     all_accounts = pd.DataFrame(columns=[''])
     query = 'https://api.crowdtangle.com/lists/' + \
@@ -71,11 +80,7 @@ def ct_get_lists(list_id, count, access_token):
 
 if __name__ == "__main__":
 
-    list_id = 1484485
-    access_token = "xVwti7hHe2SYdVSGyDJ42TCSms7XvmStrWVIy41b"
-    count = 1000
-    accounts_df = ct_get_lists(list_id, count, access_token)
-    # print(accounts_df)
-    file_name = str(date.today()) + ".csv"
+    # list_id = 1484485
+    accounts_df = ct_get_lists()
+    file_name = str(date.today()) + "_lists.csv"
     accounts_df.to_csv(file_name, encoding='utf-8')
-    print(help(ct_get_lists))

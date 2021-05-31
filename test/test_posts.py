@@ -5,7 +5,6 @@ import pandas as pd
 from datetime import datetime
 
 
-
 class TestSubscriberCount(unittest.TestCase):
     """
     Check for extracted content from CrowdTangle
@@ -13,7 +12,7 @@ class TestSubscriberCount(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.current_date_filename = "Facebook/data/" + datetime.now().strftime("%Y-%m-%d") + "_lists.csv"
+        cls.current_date_filename = "Facebook/data/" + datetime.now().strftime("%Y-%m-%d") + "_posts.csv"
 
     def test_a_file_exists(self):
         """
@@ -29,11 +28,11 @@ class TestSubscriberCount(unittest.TestCase):
 
         df = pd.read_csv(self.current_date_filename)
 
-        self.assertGreaterEqual(len(df), 10000)
+        self.assertGreaterEqual(len(df), 1)
 
     def test_c_file_contains_id_check(self):
         """
         Test if all account ID entires are strings. NaN entries will raise error.
         """
         df = pd.read_csv(self.current_date_filename)
-        self.assertEqual(len(df['id'].dropna()), len(df['id']))
+        self.assertIsInstance(df.loc[:, "account.id"], str)
