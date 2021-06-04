@@ -61,8 +61,6 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
                 time.sleep(60)
 
                 continue
-            logger.debug(json_response)
-            next_Page_url = json_response['result']['pagination']['nextPage']
 
             normalized_json = pd.json_normalize(
                 json_response['result']['posts'])
@@ -86,7 +84,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
 
                     with open(f'{start_date}_{end_date}.json', 'a', encoding='utf8') as f:
                         json.dump(json_response['result']['posts'][i-1], f, ensure_ascii=False, indent=4)
-                    query = next_Page_url
+                    query = json_response['result']['pagination']['nextPage']
 
                     os.chdir(f'/home/adyk007/DBoeS-stats/Facebook/results/{list_id}')
 

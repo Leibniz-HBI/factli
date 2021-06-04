@@ -9,7 +9,7 @@ import click
 
 @click.command()
 @click.option('--list_id', help='Saved List ID')
-@click.option('--count', default=100, help='Number of accounts returned per call')
+@click.option('--count', default=1000, help='Number of accounts returned per call')
 @click.option('--access_token', help='Your unique access token')
 def ct_get_lists(list_id, count, access_token):
     '''
@@ -38,8 +38,6 @@ def ct_get_lists(list_id, count, access_token):
 
             r = requests.get(query)
             json_response = r.json()
-            logger.debug(json_response)
-            next_Page_url = json_response['result']['pagination']['nextPage']
 
             normalized_json = pd.json_normalize(
                 json_response['result']['accounts'])
@@ -65,7 +63,7 @@ def ct_get_lists(list_id, count, access_token):
 
                 accounts = data_frame
                 all_accounts = all_accounts.append(accounts)
-                query = next_Page_url
+                query = json_response['result']['pagination']['nextPage']
 
             else:
                 print("Other Status: ", status)
@@ -73,14 +71,15 @@ def ct_get_lists(list_id, count, access_token):
 
         except KeyError:
             print("No next page")
+            file_name = str(date.today()) + "_lists.csv"
+            all_accounts.to_csv(file_name, encoding='utf-8')
+
             break
 
-    return(all_accounts)
+    return None
 
 
 if __name__ == "__main__":
 
-    # list_id = 1484485
-    accounts_df = ct_get_lists()
-    file_name = str(date.today()) + "_lists.csv"
-    accounts_df.to_csv(file_name, encoding='utf-8')
+    # list_id = 1484485 1483968
+    ct_get_lists()
