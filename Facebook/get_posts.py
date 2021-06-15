@@ -9,9 +9,10 @@ import Access_Token
 from loguru import logger
 import click
 
+str0 = pathlib.Path.cwd()
 str1 = "results"
 pathlib.Path(f'{str1}').mkdir(exist_ok=True)
-os.chdir('/home/adyk007/DBoeS-stats/Facebook/results')
+os.chdir(f'{str0}/results')
 
 
 @click.command()
@@ -36,7 +37,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
     '''
 
     pathlib.Path(f'{list_id}').mkdir(exist_ok=True)
-    os.chdir(f'/home/adyk007/DBoeS-stats/Facebook/results/{list_id}')
+    os.chdir(f'{str0}/results/{list_id}')
     if access_token is None:
         access_token = Access_Token.access_token
 
@@ -44,8 +45,9 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
         end_date = datetime.date.today()
         start_date = end_date - datetime.timedelta(days=1)
 
-    query = 'https://api.crowdtangle.com/' + '/posts?token=' + str(access_token) + '&listIds=' + str(
-        list_id) + '&startDate=' + str(start_date) + '&endDate=' + str(end_date) + '&count=' + str(count)
+    # query = 'https://api.crowdtangle.com/' + '/posts?token=' + str(access_token) + '&listIds=' + str(
+        # list_id) + '&startDate=' + str(start_date) + '&endDate=' + str(end_date) + '&count=' + str(count)
+    query = f'https://api.crowdtangle.com/posts?token={access_token}&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
 
     while(query != ''):
         try:
@@ -80,13 +82,13 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
 
                     x = str(json_response['result']['posts'][i-1]['account']['id'])
                     pathlib.Path(f'{x}').mkdir(exist_ok=True)
-                    os.chdir(f'/home/adyk007/DBoeS-stats/Facebook/results/{list_id}/{x}')
+                    os.chdir(f'{str0}/results/{list_id}/{x}')
 
                     with open(f'{start_date}_{end_date}.json', 'a', encoding='utf8') as f:
                         json.dump(json_response['result']['posts'][i-1], f, ensure_ascii=False, indent=4)
                     query = json_response['result']['pagination']['nextPage']
 
-                    os.chdir(f'/home/adyk007/DBoeS-stats/Facebook/results/{list_id}')
+                    os.chdir(f'{str0}/results/{list_id}')
 
             else:
                 logger.info("Other Status: ", status)
