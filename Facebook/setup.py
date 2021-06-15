@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='yourscript',
+    name='get_posts',
     version='0.1.0',
     py_modules=['get_posts'],
     install_requires=[
