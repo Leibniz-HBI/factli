@@ -3,7 +3,10 @@ Collectors of reputation metrics of public speakers in social media platforms
 
 ### About
 
-The Facebook directory extracts content from CrowdTangle and creates CSV files containing the statistics of facebook pages. 
+The Facebook directory-
+
+1. extracts content from CrowdTangle and creates CSV files containing the statistics of facebook pages (get_list.py). 
+2. extracts posts of accounts and creates individual folders containing JSON response for every account (get_posts.py). 
 ## Basic Installation
 
 ### Cloning this Repo
@@ -23,87 +26,87 @@ Alternatively you can download a zip folder or clone the repository via the gree
 
 ### Enviroment 
 
-1. Install pipenv to create a virtual enviroment. The latest version can be found here:
+1. Install pipenv to create a virtual environment. The latest version can be found here:
 [pipenv](https://pipenv.readthedocs.io/en/latest)
 
-2. After installing pipenv, navigate to the directory of the application and run:
+2. After installing pipenv, navigate to the DBoeS directory and run:
 
 ```
 pipenv install
 ```
-This will create a virtual envirement with the credentials that we have provided in
+This will create a virtual environment with the credentials that we have provided in
 our pipfile. 
+
+Add ~/local/bin to PATH. Open ~/.profile file and add this line to the file: 
+```
+export PATH =”~/.local/bin:$PATH”
+```
+Then run:
+```
+source ~/.profile 
+```
+for the changes to take effect.
 
 After this you can start a shell in the virtual environment with:
 
 ```
 pipenv shell
 ```
-
-You can execute the application within the shell with:
+To deactivate the virtual environment simply run: 
+```
+deactivate
+```
+You can execute the application within the shell with the options listed in the Usage section:
 
 ```
-python main.py
+python get_posts.py/ get_list.py
 ```
-### Packages Required
-Pandas
-```
-pipenv install pandas
-```
+### Storing Access Token 
 
-### Usage (Number of Posts)
+Store your access token in a python file and name it Access_Token.py
+
+
+### Usage (Posts)
 ```
-usage: number_of_posts.py [-h] -l  [-a] [-s] [-e]
+usage: python get_posts.py [OPTIONS]
 
-Retrieve list of accounts
+  This function generates individual folders containing posts from accounts (with complete information) for the given List ID.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -l , --list_id        Saved List ID
-  -a , --access_token   Your unique access token
-  -s , --start_date     Start Date (older), Format=YYYY-MM-DD
-  -e , --end_date       End Date(newer), Format=YYYY-MM-DD
+  Args:     list_id (int): This ID corresponds to the saved list of Facebook pages.
+              count (int): The number of posts to be returned per API request.
+        access_token(str): The access token associated with your CrowdTangle account.
+          start_date(str): The earliest date at which a post could be posted.
+            end_date(str): The latest date at which a post could be posted.
+
+  Returns: None
+
+Options:
+  --list_id TEXT       Saved List ID
+  --count INTEGER      Number of posts returned per call
+  --access_token TEXT  Your unique access token
+  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD
+  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD
+  --help               Show this message and exit.
 ```
-### Usage (List of Account IDs)
+### Usage (List)
 ```
-usage: get_list.py [-h] -l  [-a]
+usage: python get_list.py [Options]
 
-Retrieve list of accounts
+  This function generates a data frame containing all the accounts (with complete information) for the given List ID.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -l , --list_id        Saved List ID
-  -a , --access_token   Your unique access token
-```
-### Creating and Saving the CSV File
-```
-file_name = str(date.today()) + ".csv"
-accounts_df.to_csv(file_name, encoding='utf-8')
-```
-### Development and Testing
+  Args:     list_id (int): This ID corresponds to the saved list of Facebook pages.
+              count (int): The number of accounts to be returned per API request.
+        access_token(str): The access token associated with your CrowdTangle account.
 
-For development purposes we conduct tests before writing functions. 
+  Returns: Complete data frame containing all the accounts.
+  Example(headers):   id(str), name(str), handle(str)......
 
-#### Run all tests
-
-To run all test you can run following command in the shell:
-
-```
-python -m unittest -v
-```
-
-Run a single test file:
+Options:
+  --list_id TEXT       Saved List ID
+  --count INTEGER      Number of accounts returned per call
+  --access_token TEXT  Your unique access token
+  --help               Show this message and exit.
 
 ```
-python -m unittest -v test/mytest.py
-```
 
-#### Writing tests
 
-Create a python file containing unittest with the name `test_*.py` within the `test` directory.
-
-# Run tests
-
-```
-python -m unittest -v
-```
