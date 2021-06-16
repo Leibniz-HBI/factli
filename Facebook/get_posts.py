@@ -27,9 +27,9 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
     accounts (with information) for the given List ID.
 
     Args:
-        list_id (int): This ID corresponds to the saved list of Facebook Pages
+        list_id (int): This ID corresponds to the saved list of Facebook Pages.
         count (int): The number of posts to be returned per API request.
-        access_token(str): The access token associated with your CrowdTangle account
+        access_token(str): The access token associated with your CrowdTangle account.
         start_date(str): The earliest date at which a post could be posted.
         end_date(str): The latest date at which a post could be posted.
 

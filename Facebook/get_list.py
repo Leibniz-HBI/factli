@@ -17,9 +17,9 @@ def ct_get_lists(list_id, count, access_token):
     accounts (with information) for the given List ID.
 
     Args:
-        list_id (int): This ID corresponds to the saved list of Facebook Pages
+        list_id (int): This ID corresponds to the saved list of Facebook pages.
         count (int): The number of accounts to be returned per API request.
-        access_token(str): The access token associated with your CrowdTangle account
+        access_token(str): The access token associated with your CrowdTangle account.
 
     Returns: Complete data frame containing all the accounts.
                  Example(headers):   id(str), name(str), handle(str)......
