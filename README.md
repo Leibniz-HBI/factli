@@ -17,13 +17,6 @@ To clone this repository type:
 git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
 ```
 
-This will download this repository. You will need to have git installed.
-You can find additional information on how to do it here:
-
-[Install Git for any Operation System](https://github.com/git-guides/install-git)
-
-Alternatively you can download a zip folder or clone the repository via the green 'Code' button on the upper right of our repository.
-
 ### Enviroment 
 
 1. Install pipenv to create a virtual environment. The latest version can be found here:
