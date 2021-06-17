@@ -47,7 +47,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date):
 
     # query = 'https://api.crowdtangle.com/' + '/posts?token=' + str(access_token) + '&listIds=' + str(
         # list_id) + '&startDate=' + str(start_date) + '&endDate=' + str(end_date) + '&count=' + str(count)
-    query = f'https://api.crowdtangle.com/posts?token={access_token}&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
+    query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=date&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
 
     while(query != ''):
         try:
