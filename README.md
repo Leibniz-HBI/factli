@@ -42,7 +42,11 @@ exit
 ```
 ### Storing Access Token 
 
-Store your access token in a python file and name it Access_Token.py
+Store your access token in a python file, name it Access_Token.py and save it in the Facebook directory.
+In the file store the access token as:
+```
+access_token = "token generated from your crowd tangle account"
+```
 
 
 ### Usage (Posts)
