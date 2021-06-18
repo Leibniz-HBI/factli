@@ -54,11 +54,11 @@ access_token = "token generated from your crowd tangle account"
 usage: python get_posts.py [OPTIONS]
 
 Options:
-  --list_id TEXT       Saved List ID
-  --count INTEGER      Number of posts returned per call
+  --list_id TEXT       Saved List ID (mandatory)
+  --count INTEGER      Number of posts returned per call, maximum 100 and defaults to 10
   --access_token TEXT  Your unique access token
-  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD
-  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD
+  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD, defaults to NULL
+  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, deafults to current date
   --help               Show this message and exit.
 ```
 ### Usage (List)
@@ -66,8 +66,8 @@ Options:
 usage: python get_list.py [Options]
 
 Options:
-  --list_id TEXT       Saved List ID
-  --count INTEGER      Number of accounts returned per call
+  --list_id TEXT       Saved List ID (mandatory)
+  --count INTEGER      Number of accounts returned per call, no limit
   --access_token TEXT  Your unique access token
   --help               Show this message and exit.
 
