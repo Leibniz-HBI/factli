@@ -17,10 +17,10 @@ os.chdir(f'{str0}/results')
 
 @click.command()
 @click.option('--list_id', help='Saved List ID')
-@click.option('--count', default=100, help='Number of posts returned per call')
+@click.option('--count', default=100, help='Number of posts returned per call, maximum 100, if not given defaults to 10')
 @click.option('--access_token', help='Your unique access token')
-@click.option('--start_date', help='Start Date (older), Format=YYYY-MM-DD')
-@click.option('--end_date', help='End Date(newer), Format=YYYY-MM-DD')
+@click.option('--start_date', help='Start Date (older), Format=YYYY-MM-DD, if not given defaults to NULL')
+@click.option('--end_date', help='End Date(newer), Format=YYYY-MM-DD, if not given defaults to current date')
 def ct_get_posts(list_id, count, access_token, start_date, end_date):
     '''
     This function generates individual folders containing posts from
