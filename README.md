@@ -55,10 +55,10 @@ usage: python get_posts.py [OPTIONS]
 
 Options:
   --list_id TEXT       Saved List ID (mandatory)
-  --count INTEGER      Number of posts returned per call, maximum 100 and defaults to 10
+  --count INTEGER      Number of posts returned per call, maximum 100, if not given defaults to 100
   --access_token TEXT  Your unique access token
-  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD, defaults to NULL
-  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, deafults to current date
+  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD, if not given defaults to NULL
+  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, if not given defaults to current date
   --help               Show this message and exit.
 ```
 ### Usage (List)
@@ -67,7 +67,7 @@ usage: python get_list.py [Options]
 
 Options:
   --list_id TEXT       Saved List ID (mandatory)
-  --count INTEGER      Number of accounts returned per call, no limit
+  --count INTEGER      Number of accounts returned per call, if not given defaults to 10000.
   --access_token TEXT  Your unique access token
   --help               Show this message and exit.
 
