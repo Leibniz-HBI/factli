@@ -83,6 +83,7 @@ An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/
 
 Output of get_list.py stores the accounts of a saved list in a CSV file of the format:
 ``` date_lists.csv```
+
 Example(only headers):   id(str), name(str), handle(str)......
 
 
