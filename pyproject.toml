@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "Facebook"
+version = "0.1.0"
+description = "A Facebook Academic API Client"
+authors = ["Aditya Kumar <a.kumar@leibniz-hbi.de>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Leibniz-HBI/DBoeS-stats"
+
+exclude = [
+		"Facebook/Access_Token.py",
+		"*/.pytest_cache/*",
+		"results"
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.25.1"
+click = "^8.0.1"
+loguru = "^0.5.3"
+pandas = "^1.2.4"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.9.2"
+autopep8 = "^1.5.7"
+
+[tool.poetry.scripts]
+posts = 'Facebook.get_posts:ct_get_posts'
+list =  'Facebook.get_listt:ct_get_lists'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
