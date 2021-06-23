@@ -5,8 +5,9 @@ Collectors of reputation metrics of public speakers in social media platforms
 
 The Facebook directory-
 
-1. extracts content from CrowdTangle and creates CSV files containing the statistics of facebook pages (get_list.py). 
-2. extracts posts of accounts and creates individual folders containing JSON response for every account (get_posts.py). 
+1. extracts posts of accounts and creates individual folders containing JSON response for every account (get_posts.py). 
+2. extracts content from CrowdTangle and creates CSV files containing the statistics of facebook pages (get_list.py). 
+
 ## Basic Installation
 
 ### Cloning this Repo
@@ -17,14 +18,7 @@ To clone this repository type:
 git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
 ```
 
-This will download this repository. You will need to have git installed.
-You can find additional information on how to do it here:
-
-[Install Git for any Operation System](https://github.com/git-guides/install-git)
-
-Alternatively you can download a zip folder or clone the repository via the green 'Code' button on the upper right of our repository.
-
-### Enviroment 
+### Environment 
 
 1. Install pipenv to create a virtual environment. The latest version can be found here:
 [pipenv](https://pipenv.readthedocs.io/en/latest)
@@ -37,16 +31,6 @@ pipenv install
 This will create a virtual environment with the credentials that we have provided in
 our pipfile. 
 
-Add ~/local/bin to PATH. Open ~/.profile file and add this line to the file: 
-```
-export PATH =”~/.local/bin:$PATH”
-```
-Then run:
-```
-source ~/.profile 
-```
-for the changes to take effect.
-
 After this you can start a shell in the virtual environment with:
 
 ```
@@ -54,59 +38,54 @@ pipenv shell
 ```
 To deactivate the virtual environment simply run: 
 ```
-deactivate
-```
-You can execute the application within the shell with the options listed in the Usage section:
-
-```
-python get_posts.py/ get_list.py
+exit
 ```
 ### Storing Access Token 
 
-Store your access token in a python file and name it Access_Token.py
+Store your access token in a python file, name it Access_Token.py and save it in the Facebook directory.
+In the file store the access token as:
+```
+access_token = "token generated from your crowd tangle account"
+```
 
 
 ### Usage (Posts)
 ```
 usage: python get_posts.py [OPTIONS]
 
-  This function generates individual folders containing posts from accounts (with complete information) for the given List ID.
-
-  Args:     list_id (int): This ID corresponds to the saved list of Facebook pages.
-              count (int): The number of posts to be returned per API request.
-        access_token(str): The access token associated with your CrowdTangle account.
-          start_date(str): The earliest date at which a post could be posted.
-            end_date(str): The latest date at which a post could be posted.
-
-  Returns: None
-
 Options:
-  --list_id TEXT       Saved List ID
-  --count INTEGER      Number of posts returned per call
+  --list_id TEXT       Saved List ID (mandatory)
+  --count INTEGER      Number of posts returned per call, maximum 100, if not given defaults to 100
   --access_token TEXT  Your unique access token
-  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD
-  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD
+  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD, if not given defaults to NULL
+  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, if not given defaults to current date
   --help               Show this message and exit.
 ```
 ### Usage (List)
 ```
 usage: python get_list.py [Options]
 
-  This function generates a data frame containing all the accounts (with complete information) for the given List ID.
-
-  Args:     list_id (int): This ID corresponds to the saved list of Facebook pages.
-              count (int): The number of accounts to be returned per API request.
-        access_token(str): The access token associated with your CrowdTangle account.
-
-  Returns: Complete data frame containing all the accounts.
-  Example(headers):   id(str), name(str), handle(str)......
-
 Options:
-  --list_id TEXT       Saved List ID
-  --count INTEGER      Number of accounts returned per call
+  --list_id TEXT       Saved List ID (mandatory)
+  --count INTEGER      Number of accounts returned per call, if not given defaults to 10000.
   --access_token TEXT  Your unique access token
   --help               Show this message and exit.
 
 ```
+### Output
+
+Output of get_posts.py stores the raw JSON response in the following folder structure:
+
+```
+Facebook/results/list_id/account_id/start-date_end-date.json
+```
+An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/API/wiki/Posts)
+
+Output of get_list.py stores the accounts of a saved list in a CSV file of the format:
+``` date_lists.csv```
+
+Example(only headers):   id(str), name(str), handle(str)......
+
+
 
 
