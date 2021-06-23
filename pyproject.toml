@@ -1,8 +1,11 @@
 [tool.poetry]
-name = "Facebook"
+name = "factli"
 version = "0.1.0"
-description = "A Facebook Academic API Client"
-authors = ["Aditya Kumar <a.kumar@leibniz-hbi.de>"]
+description = "A Facebook Crowdtangle Client"
+authors = [
+	"Aditya Kumar <a.kumar@leibniz-hbi.de>",
+	"Felix Victor Münch <f.muench@leibniz-hbi.de>"
+	]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/Leibniz-HBI/DBoeS-stats"
@@ -24,10 +27,10 @@ pandas = "^1.2.4"
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
 autopep8 = "^1.5.7"
+pytest = "^6.2.4"
 
 [tool.poetry.scripts]
-posts = 'Facebook.get_posts:ct_get_posts'
-list =  'Facebook.get_listt:ct_get_lists'
+factli = 'factli.get_posts:ct_get_posts'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

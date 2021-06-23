@@ -130,10 +130,9 @@ dmypy.json
 
 
 # Project specific stuff
-Facebook/data/
-Twitter/data/
-Facebook/results/
-Facebook/Access_Token.py
+data
+results
+Access_Token.py
 Facebook/demo1.py
 
 # VSCode project settings
@@ -143,4 +142,4 @@ Facebook/demo1.py
 setup.cfg
 
 Pipfile.lock
-.vscode
+poetry.lock
