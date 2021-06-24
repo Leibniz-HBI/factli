@@ -29,7 +29,7 @@ To clone this repository type:
 ```
 git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
 ```
-### Usage (Posts)
+### Usage
 ```
 usage: factli [OPTIONS]
 
@@ -49,12 +49,8 @@ Output of get_posts.py stores the raw JSON response in the following folder stru
 
 `Facebook/results/list_id/account_id/start-date_end-date.json`
 
-An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/API/wiki/Posts)
+An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/API/wiki/Posts).
 
-Output of get_list.py stores the accounts of a saved list in a CSV file of the format:
-``` date_lists.csv```
-
-Example(only headers):   id(str), name(str), handle(str)......
 
 
 
