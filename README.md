@@ -34,11 +34,19 @@ git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
 usage: factli [OPTIONS]
 
 Options:
-  --list_id TEXT       Saved List ID (mandatory)
-  --count INTEGER      Number of posts returned per call, maximum 100, if not given defaults to 100
+  --list_id TEXT       Saved List ID
+  --count INTEGER      Number of posts returned per call, maximum 100,
+                       defaults to 10
   --access_token TEXT  Your unique access token
-  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD, if not given defaults to NULL
-  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, if not given defaults to current date
+  --start_date TEXT    Start Date (older), Format=YYYY-MM-DD, if not given
+                       defaults to NULL
+  --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, if not given
+                       defaults to current date
+  --log_level TEXT     Level of output detail (DEBUG, INFO, WARNING, ERROR).
+                       Warnings and Errors are always logged in respective 
+                       log-files `errors.log` and `warnings.log`.
+                       Default: ERROR
+  --log_file TEXT      Path to logfile. Defaults to standard output.
   --help               Show this message and exit.
 ```
 
@@ -50,8 +58,3 @@ Output of get_posts.py stores the raw JSON response in the following folder stru
 `Facebook/results/list_id/account_id/start-date_end-date.json`
 
 An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/API/wiki/Posts).
-
-
-
-
-
