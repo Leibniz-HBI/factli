@@ -9,7 +9,8 @@ import pandas as pd
 import Access_Token
 from loguru import logger
 import click
-import requests.exceptions
+import schedule
+
 
 str0 = pathlib.Path.cwd()
 str1 = "results"
@@ -25,9 +26,10 @@ os.chdir(f'{str0}/results')
 @click.option('--end_date', help='End Date(newer), Format=YYYY-MM-DD, if not given defaults to current date')
 @click.option('--log_level', help='Level of output detail (DEBUG, INFO, WARNING, ERROR). Warnings and Errors are \
               always logged in respective log-files `errors.log` and `warnings.log`.\
-              Default: ERROR', default='ERROR')
+              Default: ERROR', default='ERROR')              
 @click.option('--log_file', help='Path to logfile. Defaults to standard output.')
-def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file):
+@click.option('--sched', help='If given, repeat every "sched" minutes.')
+def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched):
     '''
     This function generates individual folders containing posts from
     accounts (with information) for the given List ID.
@@ -61,65 +63,83 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     logger.add('warnings.log', level='WARNING')
     query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=date&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
 
-    @retry
-    def get_page(query):
+    def start_collection(query):
+        @retry
+        def get_page(query):
 
-        try:
-
-            logger.info(f"Fetching:{query}")
-
-            r = requests.get(query, timeout=5)
-
-            json_response = r.json()
-            if (json_response['status'] == 429):
-
-                logger.info("API rate limit hit, sleeping...")
-                time.sleep(60)
-                return query
-
-            normalized_json = pd.json_normalize(
-                json_response['result']['posts'])
-
-            data_frame = pd.DataFrame.from_dict(
-                normalized_json, orient="columns", dtype=str)
-
-            posts_count = len(data_frame)
-            logger.debug(posts_count)
-
-            status = r.status_code
-            logger.info(status)
             try:
-                assert status == 200
-            except AssertionError as e:
-                logger.warning(r.text)
-                raise e
 
-            if(status == 200 and posts_count != 0):
+                logger.info(f"Fetching:{query}")
 
-                for i in range(posts_count):
+                r = requests.get(query, timeout=5)
 
-                    x = str(json_response['result']['posts'][i-1]['account']['id'])
-                    pathlib.Path(f'{x}').mkdir(exist_ok=True)
-                    os.chdir(f'{str0}/results/{list_id}/{x}')
+                json_response = r.json()
+                if (json_response['status'] == 429):
 
-                    with open(f'{start_date}_{end_date}.json', 'a', encoding='utf8') as f:
-                        json.dump(json_response['result']['posts'][i-1], f, ensure_ascii=False, indent=4)
-                    next_page_query = json_response['result']['pagination']['nextPage']
+                    logger.info("API rate limit hit, sleeping...")
+                    time.sleep(60)
+                    return query
 
-                    os.chdir(f'{str0}/results/{list_id}')
+                normalized_json = pd.json_normalize(
+                    json_response['result']['posts'])
 
-            else:
-                logger.warning("Other Status: ", status)
-                # query = ''
+                data_frame = pd.DataFrame.from_dict(
+                    normalized_json, orient="columns", dtype=str)
 
-        except KeyError:
-            logger.info("No next page, Collection over")
-            next_page_query = ''
+                posts_count = len(data_frame)
+                logger.debug(posts_count)
 
-        return next_page_query
+                status = r.status_code
+                logger.info(status)
+                try:
+                    assert status == 200
+                except AssertionError as e:
+                    logger.warning(r.text)
+                    raise e
 
-    while (query != ''):
-        query = get_page(query)
+                if(status == 200 and posts_count != 0):
+
+                    for i in range(posts_count):
+
+                        x = str(json_response['result']['posts'][i-1]['account']['id'])
+                        pathlib.Path(f'{x}').mkdir(exist_ok=True)
+                        os.chdir(f'{str0}/results/{list_id}/{x}')
+
+                        with open(f'{start_date}_{end_date}.json', 'a', encoding='utf8') as f:
+                            json.dump(json_response['result']['posts'][i-1], f, ensure_ascii=False, indent=4)
+                        next_page_query = json_response['result']['pagination']['nextPage']
+
+                        os.chdir(f'{str0}/results/{list_id}')
+
+                else:
+                    logger.warning("Other Status: ", status)
+                    # query = ''
+
+            except KeyError:
+                logger.info("No next page, Collection over")
+                next_page_query = ''
+
+            return next_page_query
+
+        while (query != ''):
+            query = get_page(query)
+        return None
+
+    if sched is None:
+        start_collection(query)
+    else:
+        schedule.every(int(sched)).hours.do(start_collection, query)
+        start_collection(query)
+    
+    while True:
+        try: 
+            schedule.run_pending()
+            time.sleep(1)
+        
+        except KeyboardInterrupt:
+                logger.info("Keyboard Interrupt, Stopping Collection")
+                break
+
 
     return None
 

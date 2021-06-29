@@ -23,6 +23,7 @@ requests = "^2.25.1"
 click = "^8.0.1"
 loguru = "^0.5.3"
 pandas = "^1.2.4"
+schedule = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
