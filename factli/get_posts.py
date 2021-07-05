@@ -133,12 +133,12 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
         schedule.every(int(sched)).hours.do(start_collection, query)
         start_collection(query)
     
-    while True:
-        try: 
-            schedule.run_pending()
-            time.sleep(1)
+        while True:
+            try: 
+                schedule.run_pending()
+                time.sleep(1)
         
-        except KeyboardInterrupt:
+            except KeyboardInterrupt:
                 logger.info("Keyboard Interrupt, Stopping Collection")
                 break
 
