@@ -8,7 +8,6 @@ import requests
 import pandas as pd
 import Access_Token
 import click
-import socket
 import yagmail
 import schedule
 from loguru import logger
