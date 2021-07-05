@@ -196,7 +196,7 @@ def retry(func):
 def send_mail(recipient, subject, content):
 
     try:
-        yag = yagmail.SMTP(oauth2_file=pathlib.Path.cwd()/'gmail_creds.json')
+        yag = yagmail.SMTP(oauth2_file=str0/'gmail_creds.json')
         yag.send(recipient, subject, content)
         logger.info(f'Email sent to {recipient}.\nSubject: {subject}\n{content}')
     except Exception as e:
