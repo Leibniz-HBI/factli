@@ -143,3 +143,5 @@ setup.cfg
 
 Pipfile.lock
 poetry.lock
+gmail_creds.json.json
+gmail_creds.json.json:Zone.Identifier

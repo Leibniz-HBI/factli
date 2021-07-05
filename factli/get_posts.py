@@ -7,9 +7,11 @@ import datetime
 import requests
 import pandas as pd
 import Access_Token
-from loguru import logger
 import click
+import socket
+import yagmail
 import schedule
+from loguru import logger
 
 
 str0 = pathlib.Path.cwd()
@@ -29,7 +31,8 @@ os.chdir(f'{str0}/results')
               Default: ERROR', default='ERROR')              
 @click.option('--log_file', help='Path to logfile. Defaults to standard output.')
 @click.option('--sched', help='If given, waits "sched" hour(s) and then repeats.')
-def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched):
+@click.option('--notify', help='If given, notify email address in case of unexpected errors. Needs further setup. See README.')
+def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify):
     '''
     This function generates individual folders containing posts from
     accounts (with information) for the given List ID.
@@ -65,6 +68,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
     def start_collection(query):
         logger.info(f"Starting Collection of {list_id}")
+        send_mail(notify, "Hello", "Collection started" )
         @retry
         def get_page(query):
 
@@ -134,12 +138,20 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
         start_collection(query)
     
         while True:
-            try: 
-                schedule.run_pending()
-                time.sleep(1)
-        
+            
+            try:
+
+                try: 
+                    schedule.run_pending()
+                    time.sleep(1)
+                
+                except Exception as e:
+                    logger.error(e)
+                    send_mail(notify, 'Hello', str(e))
+
             except KeyboardInterrupt:
                 logger.info("Keyboard Interrupt, Stopping Collection")
+                send_mail(notify, "Error", "KeyboardInterrupt")
                 break
 
 
@@ -181,6 +193,15 @@ def retry(func):
 
     return retried_func
 
+
+def send_mail(recipient, subject, content):
+
+    try:
+        yag = yagmail.SMTP(oauth2_file=pathlib.Path.cwd()/'gmail_creds.json')
+        yag.send(recipient, subject, content)
+        logger.info(f'Email sent to {recipient}.\nSubject: {subject}\n{content}')
+    except Exception as e:
+        logger.error(f'Sending mail failed: {e}')
 
 if __name__ == "__main__":
 
