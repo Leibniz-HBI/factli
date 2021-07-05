@@ -28,7 +28,7 @@ os.chdir(f'{str0}/results')
               always logged in respective log-files `errors.log` and `warnings.log`.\
               Default: ERROR', default='ERROR')              
 @click.option('--log_file', help='Path to logfile. Defaults to standard output.')
-@click.option('--sched', help='If given, repeat every "sched" minutes.')
+@click.option('--sched', help='If given, waits "sched" hour(s) and then repeats.')
 def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched):
     '''
     This function generates individual folders containing posts from
@@ -64,6 +64,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=date&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
 
     def start_collection(query):
+        logger.info(f"Starting Collection of {list_id}")
         @retry
         def get_page(query):
 
@@ -116,7 +117,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
                     # query = ''
 
             except KeyError:
-                logger.info("No next page, Collection over")
+                logger.info(f"No next page, Collection finished for {list_id}")
                 next_page_query = ''
 
             return next_page_query
@@ -128,6 +129,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     if sched is None:
         start_collection(query)
     else:
+        logger.info(f"Scheduling job for every {sched} minutes")
         schedule.every(int(sched)).hours.do(start_collection, query)
         start_collection(query)
     
