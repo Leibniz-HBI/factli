@@ -132,7 +132,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     if sched is None:
         start_collection(query)
     else:
-        logger.info(f"Scheduling job for every {sched} minutes")
+        logger.info(f"Scheduling job for every {sched} hour(s)")
         schedule.every(int(sched)).hours.do(start_collection, query)
         start_collection(query)
     
