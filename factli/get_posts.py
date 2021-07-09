@@ -6,7 +6,6 @@ import pathlib
 import datetime
 import requests
 import pandas as pd
-import Access_Token
 import click
 import yagmail
 import schedule
@@ -48,12 +47,17 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
     pathlib.Path(f'{list_id}').mkdir(exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
+    
     if access_token is None:
+        import Access_Token
         access_token = Access_Token.access_token
 
     if start_date is None:
         end_date = datetime.date.today()
         start_date = end_date - datetime.timedelta(days=1)
+    
+    else:
+        end_date = datetime.date.today()
 
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
@@ -67,7 +71,10 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
     def start_collection(query):
         logger.info(f"Starting Collection of {list_id}")
-        send_mail(notify, "Hello", "Collection started" )
+        
+        if notify is not None:
+            send_mail(notify, "Hello", "Collection started" )
+        
         @retry
         def get_page(query):
 
@@ -147,11 +154,13 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
                 
                 except Exception as e:
                     logger.error(e)
-                    send_mail(notify, 'Hello', str(e))
+                    if notify is not None:
+                        send_mail(notify, 'Hello', str(e))
 
             except KeyboardInterrupt:
                 logger.info("Keyboard Interrupt, Stopping Collection")
-                send_mail(notify, "Error", "KeyboardInterrupt")
+                if notify is not None:
+                    send_mail(notify, "Error", "KeyboardInterrupt")
                 break
 
 
