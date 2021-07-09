@@ -130,6 +130,7 @@ dmypy.json
 
 
 # Project specific stuff
+dest/
 data
 results
 Access_Token.py
