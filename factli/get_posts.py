@@ -47,6 +47,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
     pathlib.Path(f'{list_id}').mkdir(exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
+    
     if access_token is None:
         import Access_Token
         access_token = Access_Token.access_token
