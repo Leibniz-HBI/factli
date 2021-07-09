@@ -6,7 +6,6 @@ import pathlib
 import datetime
 import requests
 import pandas as pd
-import Access_Token
 import click
 import yagmail
 import schedule
@@ -49,6 +48,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     pathlib.Path(f'{list_id}').mkdir(exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
     if access_token is None:
+        import Access_Token
         access_token = Access_Token.access_token
 
     if start_date is None:
