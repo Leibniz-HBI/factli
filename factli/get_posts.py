@@ -117,7 +117,11 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
                         os.chdir(f'{str0}/results/{list_id}/{x}')
 
                         with open(f'{start_date}_{end_date}.ndjson', 'a', encoding='utf8') as f:
-                            json.dump(json_response['result']['posts'][i-1], f, ensure_ascii=False)
+                            post = json_response['result']['posts'][i-1]
+
+                            post['written_at'] = str(datetime.datetime.now())
+
+                            json.dump(post, f, ensure_ascii=False)
                             f.write("\n")
                         next_page_query = json_response['result']['pagination']['nextPage']
 
