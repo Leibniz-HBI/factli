@@ -123,9 +123,10 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
                             json.dump(post, f, ensure_ascii=False)
                             f.write("\n")
-                        next_page_query = json_response['result']['pagination']['nextPage']
+                        
 
                         os.chdir(f'{str0}/results/{list_id}')
+                    next_page_query = json_response['result']['pagination']['nextPage']
 
                 else:
                     logger.warning("Other Status: ", status)
