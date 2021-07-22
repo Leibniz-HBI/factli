@@ -34,7 +34,7 @@ git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
 usage: factli [OPTIONS]
 
 Options:
-  --list_id TEXT       Saved List ID
+   --list_id TEXT       Saved List ID
   --count INTEGER      Number of posts returned per call, maximum 100,
                        defaults to 10
   --access_token TEXT  Your unique access token
@@ -43,13 +43,16 @@ Options:
   --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, if not given
                        defaults to current date
   --log_level TEXT     Level of output detail (DEBUG, INFO, WARNING, ERROR).
-                       Warnings and Errors are always logged in respective 
-                       log-files `errors.log` and `warnings.log`.
+                       Warnings and Errors are               always logged in
+                       respective log-files `errors.log` and `warnings.log`.
                        Default: ERROR
   --log_file TEXT      Path to logfile. Defaults to standard output.
+  --sched TEXT         If given, waits "sched" hour(s) and then repeats.
+  --notify TEXT        If given, notify email address in case of unexpected
+                       errors. Needs further setup. See README.
   --help               Show this message and exit.
 ```
-
+Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/).
 ## Output
 
 Output of get_posts.py stores the raw JSON response in the following folder structure:
