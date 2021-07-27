@@ -34,7 +34,7 @@ git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
 usage: factli [OPTIONS]
 
 Options:
-   --list_id TEXT       Saved List ID
+  --list_id TEXT       Saved List ID
   --count INTEGER      Number of posts returned per call, maximum 100,
                        defaults to 10
   --access_token TEXT  Your unique access token
@@ -50,6 +50,8 @@ Options:
   --sched TEXT         If given, waits "sched" hour(s) and then repeats.
   --notify TEXT        If given, notify email address in case of unexpected
                        errors. Needs further setup. See README.
+  --path TEXT          If given, stores the output at the desired location
+                       (Absolute Path needed)
   --help               Show this message and exit.
 ```
 Email notifications with the `-n` argument use [yagmail](https://pypi.org/project/yagmail/).
@@ -61,3 +63,12 @@ Output of get_posts.py stores the raw JSON response in the following folder stru
 `Facebook/results/list_id/account_id/start-date_end-date.json`
 
 An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/API/wiki/Posts).
+
+## Ensure that twacapic is continuously running, even after restart
+If your system can run cronjobs, stop twacapic, run `crontab -e` and add the following to your crontab:
+
+```cron
+30 6 * * *    sh -c "cd PATH/TO/YOUR/DBoeS-stats/WORKING/DIRECTORY && PATH/TO/Poetry-env run factli [YOUR ARGUMENTS HERE]" >> out.txt 2>&1
+```
+
+This will start collection at 0630Hr (GMT) everyday. 
