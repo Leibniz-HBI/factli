@@ -41,11 +41,14 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     '''
     str1 = pathlib.Path.cwd()
     
-    if path is None:
-        str0 = pathlib.Path.cwd()
+    if path is not None:
+        str0 = path
+        print(str0)
+        os.chdir(str0)  
         
     else:
-        str0 = path
+        str0 = pathlib.Path.cwd()
+
     
     pathlib.Path(f'results/{list_id}').mkdir(parents=True, exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
@@ -84,7 +87,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
                 logger.info(f"Fetching:{query}")
 
-                r = requests.get(query, timeout=5)
+                r = requests.get(query, timeout=10)
 
                 json_response = r.json()
                 if (json_response['status'] == 429):
