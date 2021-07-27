@@ -12,12 +12,6 @@ import schedule
 from loguru import logger
 
 
-str0 = pathlib.Path.cwd()
-str1 = "results"
-pathlib.Path(f'{str1}').mkdir(exist_ok=True)
-os.chdir(f'{str0}/results')
-
-
 @click.command()
 @click.option('--list_id', help='Saved List ID')
 @click.option('--count', default=100, help='Number of posts returned per call, maximum 100, defaults to 10')
@@ -30,7 +24,8 @@ os.chdir(f'{str0}/results')
 @click.option('--log_file', help='Path to logfile. Defaults to standard output.')
 @click.option('--sched', help='If given, waits "sched" hour(s) and then repeats.')
 @click.option('--notify', help='If given, notify email address in case of unexpected errors. Needs further setup. See README.')
-def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify):
+@click.option('--path', help='If given, stores the output at the desired location (Absolute Path needed)')
+def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path):
     '''
     This function generates individual folders containing posts from
     accounts (with information) for the given List ID.
@@ -44,8 +39,15 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
     Returns: None
     '''
-
-    pathlib.Path(f'{list_id}').mkdir(exist_ok=True)
+    str1 = pathlib.Path.cwd()
+    
+    if path is None:
+        str0 = pathlib.Path.cwd()
+        
+    else:
+        str0 = path
+    
+    pathlib.Path(f'results/{list_id}').mkdir(parents=True, exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
     
     if access_token is None:
@@ -73,7 +75,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
         logger.info(f"Starting Collection of {list_id}")
         
         if notify is not None:
-            send_mail(notify, "Hello", "Collection started" )
+            send_mail(notify, "Hello", "Collection started", str1)
         
         @retry
         def get_page(query):
@@ -160,12 +162,12 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
                 except Exception as e:
                     logger.error(e)
                     if notify is not None:
-                        send_mail(notify, 'Hello', str(e))
+                        send_mail(notify, 'Hello', str(e), str1)
 
             except KeyboardInterrupt:
                 logger.info("Keyboard Interrupt, Stopping Collection")
                 if notify is not None:
-                    send_mail(notify, "Error", "KeyboardInterrupt")
+                    send_mail(notify, "Error", "KeyboardInterrupt", str1)
                 break
 
 
@@ -208,10 +210,10 @@ def retry(func):
     return retried_func
 
 
-def send_mail(recipient, subject, content):
+def send_mail(recipient, subject, content, str1):
 
     try:
-        yag = yagmail.SMTP(oauth2_file=str0/'gmail_creds.json')
+        yag = yagmail.SMTP(oauth2_file=str1/'gmail_creds.json')
         yag.send(recipient, subject, content)
         logger.info(f'Email sent to {recipient}.\nSubject: {subject}\n{content}')
     except Exception as e:
@@ -219,5 +221,4 @@ def send_mail(recipient, subject, content):
 
 if __name__ == "__main__":
 
-    # list_id = 1484485
     ct_get_posts()
