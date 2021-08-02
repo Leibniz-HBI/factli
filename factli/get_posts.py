@@ -18,6 +18,7 @@ from loguru import logger
 @click.option('--access_token', help='Your unique access token')
 @click.option('--start_date', help='Start Date (older), Format=YYYY-MM-DD, if not given defaults to NULL')
 @click.option('--end_date', help='End Date(newer), Format=YYYY-MM-DD, if not given defaults to current date')
+@click.option('--time_frame', help='The interval of time to consider from the endDate. Any valid SQL interval, eg: "1 HOUR" or "30 MINUTE"')
 @click.option('--log_level', help='Level of output detail (DEBUG, INFO, WARNING, ERROR). Warnings and Errors are \
               always logged in respective log-files `errors.log` and `warnings.log`.\
               Default: ERROR', default='ERROR')              
@@ -25,7 +26,7 @@ from loguru import logger
 @click.option('--sched', help='If given, waits "sched" hour(s) and then repeats.')
 @click.option('--notify', help='If given, notify email address in case of unexpected errors. Needs further setup. See README.')
 @click.option('--path', help='If given, stores the output at the desired location (Absolute Path needed)')
-def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path):
+def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path, time_frame):
     '''
     This function generates individual folders containing posts from
     accounts (with information) for the given List ID.
@@ -58,12 +59,22 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
         access_token = Access_Token.access_token
 
     if start_date is None:
-        end_date = datetime.date.today()
-        start_date = end_date - datetime.timedelta(days=1)
-    
-    else:
-        end_date = datetime.date.today()
+        
+        if time_frame is not None:
+            d = datetime.datetime.now()
+            current = d - datetime.timedelta(microseconds=d.microsecond)
+            end_date = str(current.date()) + str("T") + str(current.time())
+            
+        
+        else:
+            end_date = datetime.date.today()
+            start_date = end_date - datetime.timedelta(days=1)
 
+    else:
+        end_date = datetime.datetime.today()
+    
+    
+    
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
@@ -72,7 +83,11 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
     logger.add('errors.log', level='ERROR')
     logger.add('warnings.log', level='WARNING')
-    query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=date&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
+
+    if start_date is not None:
+        query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&startDate={start_date}&endDate={end_date}&timeframe={time_frame}&count={count}'
+    else:
+        query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&endDate={end_date}&timeframe={time_frame}&count={count}'
 
     def start_collection(query):
         logger.info(f"Starting Collection of {list_id}")
@@ -88,8 +103,9 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
                 logger.info(f"Fetching:{query}")
 
                 r = requests.get(query, timeout=10)
-
+                
                 json_response = r.json()
+                #logger.debug(json_response)
                 if (json_response['status'] == 429):
 
                     logger.info("API rate limit hit, sleeping...")
@@ -98,7 +114,6 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
                 normalized_json = pd.json_normalize(
                     json_response['result']['posts'])
-
                 data_frame = pd.DataFrame.from_dict(
                     normalized_json, orient="columns", dtype=str)
 
@@ -117,25 +132,62 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
                     for i in range(posts_count):
 
-                        x = str(json_response['result']['posts'][i-1]['account']['id'])
-                        pathlib.Path(f'{x}').mkdir(exist_ok=True)
-                        os.chdir(f'{str0}/results/{list_id}/{x}')
+                            x = str(json_response['result']['posts'][i-1]['account']['id'])
+                            pathlib.Path(f'{x}').mkdir(exist_ok=True)
+                            os.chdir(f'{str0}/results/{list_id}/{x}')
 
-                        with open(f'{start_date}_{end_date}.ndjson', 'a', encoding='utf8') as f:
-                            post = json_response['result']['posts'][i-1]
+                            date_created = str(json_response['result']['posts'][i-1]['date'])
 
-                            post['written_at'] = str(datetime.datetime.now())
+                            if os.path.isfile('last_date.txt'):
+                            
+                                with open('last_date.txt') as f:
+                                    last_saved_date = f.read()
+                            
+                            else:
+                                last_saved_date = ""
 
-                            json.dump(post, f, ensure_ascii=False)
-                            f.write("\n")
-                        
+                            if (date_created > last_saved_date):
 
-                        os.chdir(f'{str0}/results/{list_id}')
+                                if start_date is None:
+
+                                    date = end_date[0:10]
+
+                                    with open(f'{date}.ndjson', 'a', encoding='utf8') as f:
+                                        post = json_response['result']['posts'][i-1]
+
+                                        post['written_at'] = str(datetime.datetime.now())
+
+                                        json.dump(post, f, ensure_ascii=False)
+                                        f.write("\n")
+                                    
+                                    with open('date.txt', 'w', encoding='utf8') as f:
+                                        f.write(date_created)
+
+                                else:    
+                                    
+                                    with open(f'{start_date}_{end_date}.ndjson', 'a', encoding='utf8') as f:
+                                        post = json_response['result']['posts'][i-1]
+
+                                        post['written_at'] = str(datetime.datetime.now())
+
+                                        json.dump(post, f, ensure_ascii=False)
+                                        f.write("\n")
+                                    
+                                    with open('date.txt', 'w', encoding='utf8') as f:
+                                        f.write(date_created)
+
+                            else:
+                                logger.info("No new Posts")
+                            os.chdir(f'{str0}/results/{list_id}')
                     next_page_query = json_response['result']['pagination']['nextPage']
+
+                elif posts_count == 0:
+                    logger.info("No Posts")
+                    next_page_query = ''
 
                 else:
                     logger.warning("Other Status: ", status)
-                    # query = ''
+                    next_page_query = ''
 
             except KeyError:
                 logger.info(f"No next page, Collection finished for {list_id}")
