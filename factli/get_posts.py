@@ -44,7 +44,6 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     
     if path is not None:
         str0 = path
-        print(str0)
         os.chdir(str0)  
         
     else:
@@ -53,28 +52,27 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     
     pathlib.Path(f'results/{list_id}').mkdir(parents=True, exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
+
+    if os.path.isfile('last_list_saved_date.txt'):
+        with open('last_list_saved_date.txt') as f:
+            d = f.read()
+            start_date = d.replace(" ", "T")
     
     if access_token is None:
         import Access_Token
         access_token = Access_Token.access_token
-
-    if start_date is None:
         
-        if time_frame is not None:
-            d = datetime.datetime.now()
-            current = d - datetime.timedelta(microseconds=d.microsecond)
-            end_date = str(current.date()) + str("T") + str(current.time())
+    if time_frame is not None:
+        d = datetime.datetime.now()
+        current = d - datetime.timedelta(microseconds=d.microsecond)
+        end_date = str(current.date()) + str("T") + str(current.time())
             
         
-        else:
-            end_date = datetime.date.today()
-            start_date = end_date - datetime.timedelta(days=1)
-
     else:
-        end_date = datetime.datetime.today()
+        end_date = datetime.date.today()
+        start_date = end_date - datetime.timedelta(days=1)
     
-    
-    
+
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
@@ -85,7 +83,7 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
     logger.add('warnings.log', level='WARNING')
 
     if start_date is not None:
-        query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&startDate={start_date}&endDate={end_date}&timeframe={time_frame}&count={count}'
+        query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
     else:
         query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&endDate={end_date}&timeframe={time_frame}&count={count}'
 
@@ -136,53 +134,32 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
                             pathlib.Path(f'{x}').mkdir(exist_ok=True)
                             os.chdir(f'{str0}/results/{list_id}/{x}')
 
-                            date_created = str(json_response['result']['posts'][i-1]['date'])
+                            last_post_date = str(json_response['result']['posts'][i-1]['date'])
 
-                            if os.path.isfile('last_date.txt'):
+                            date = end_date[0:10]
+
+                            with open(f'{date}.ndjson', 'a', encoding='utf8') as f:
+                                post = json_response['result']['posts'][i-1]
+
+                                post['written_at'] = str(datetime.datetime.now())
+
+                                json.dump(post, f, ensure_ascii=False)
+                                f.write("\n")
                             
-                                with open('last_date.txt') as f:
-                                    last_saved_date = f.read()
-                            
-                            else:
-                                last_saved_date = ""
+                            with open('last_post_date.txt', 'w', encoding='utf8') as f:
+                                f.write(last_post_date)
 
-                            if (date_created > last_saved_date):
-
-                                if start_date is None:
-
-                                    date = end_date[0:10]
-
-                                    with open(f'{date}.ndjson', 'a', encoding='utf8') as f:
-                                        post = json_response['result']['posts'][i-1]
-
-                                        post['written_at'] = str(datetime.datetime.now())
-
-                                        json.dump(post, f, ensure_ascii=False)
-                                        f.write("\n")
-                                    
-                                    with open('date.txt', 'w', encoding='utf8') as f:
-                                        f.write(date_created)
-
-                                else:    
-                                    
-                                    with open(f'{start_date}_{end_date}.ndjson', 'a', encoding='utf8') as f:
-                                        post = json_response['result']['posts'][i-1]
-
-                                        post['written_at'] = str(datetime.datetime.now())
-
-                                        json.dump(post, f, ensure_ascii=False)
-                                        f.write("\n")
-                                    
-                                    with open('date.txt', 'w', encoding='utf8') as f:
-                                        f.write(date_created)
-
-                            else:
-                                logger.info("No new Posts")
                             os.chdir(f'{str0}/results/{list_id}')
                     next_page_query = json_response['result']['pagination']['nextPage']
 
                 elif posts_count == 0:
-                    logger.info("No Posts")
+                    logger.info("No New Posts")
+                    os.chdir(f'{str0}/results/{list_id}')
+
+                    with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
+                        dt = end_date.replace("T", " ")
+                        f.write(dt)
+                    
                     next_page_query = ''
 
                 else:
@@ -191,6 +168,12 @@ def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, 
 
             except KeyError:
                 logger.info(f"No next page, Collection finished for {list_id}")
+                os.chdir(f'{str0}/results/{list_id}')
+
+                with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
+                    dt = end_date.replace("T", " ")
+                    f.write(dt)
+                
                 next_page_query = ''
 
             return next_page_query
