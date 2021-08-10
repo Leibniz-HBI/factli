@@ -42,6 +42,8 @@ Options:
                        defaults to NULL
   --end_date TEXT      End Date(newer), Format=YYYY-MM-DD, if not given
                        defaults to current date
+  --time_frame TEXT    The interval of time to consider from the endDate. Any
+                       valid SQL interval, eg: "1 HOUR" or "30 MINUTE"
   --log_level TEXT     Level of output detail (DEBUG, INFO, WARNING, ERROR).
                        Warnings and Errors are               always logged in
                        respective log-files `errors.log` and `warnings.log`.
