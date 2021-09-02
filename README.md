@@ -66,7 +66,7 @@ Output of get_posts.py stores the raw JSON response in the following folder stru
 
 An example of the JSON data can be viewed [here](https://github.com/CrowdTangle/API/wiki/Posts).
 
-## Ensure that twacapic is continuously running, even after restart
+## Ensure that factli is continuously running, even after restart
 If your system can run cronjobs, stop twacapic, run `crontab -e` and add the following to your crontab:
 
 ```cron
