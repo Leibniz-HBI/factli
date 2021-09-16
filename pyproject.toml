@@ -32,7 +32,7 @@ autopep8 = "^1.5.7"
 pytest = "^6.2.4"
 
 [tool.poetry.scripts]
-factli = 'factli.get_posts:ct_get_posts'
+factli = 'factli.factli:cli'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

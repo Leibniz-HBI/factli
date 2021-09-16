@@ -11,7 +11,7 @@ import click
 @click.option('--list_id', help='Saved List ID')
 @click.option('--count', default=10000, help='Number of accounts returned per call, no limit')
 @click.option('--access_token', help='Your unique access token')
-def ct_get_lists(list_id, count, access_token):
+def lists(list_id, count, access_token):
     '''
     This function generates a data frame containing all the
     accounts (with information) for the given List ID.
@@ -77,9 +77,3 @@ def ct_get_lists(list_id, count, access_token):
             break
 
     return None
-
-
-if __name__ == "__main__":
-
-    # list_id = 1484485 1483968
-    ct_get_lists()

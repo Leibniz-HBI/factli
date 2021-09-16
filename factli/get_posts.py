@@ -11,7 +11,6 @@ import yagmail
 import schedule
 from loguru import logger
 
-
 @click.command()
 @click.option('--list_id', help='Saved List ID')
 @click.option('--count', default=100, help='Number of posts returned per call, maximum 100, defaults to 10')
@@ -26,7 +25,7 @@ from loguru import logger
 @click.option('--sched', help='If given, waits "sched" hour(s) and then repeats.')
 @click.option('--notify', help='If given, notify email address in case of unexpected errors. Needs further setup. See README.')
 @click.option('--path', help='If given, stores the output at the desired location (Absolute Path needed)')
-def ct_get_posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path, time_frame):
+def posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path, time_frame):
     '''
     This function generates individual folders containing posts from
     accounts (with information) for the given List ID.
@@ -256,7 +255,3 @@ def send_mail(recipient, subject, content, str1):
         logger.info(f'Email sent to {recipient}.\nSubject: {subject}\n{content}')
     except Exception as e:
         logger.error(f'Sending mail failed: {e}')
-
-if __name__ == "__main__":
-
-    ct_get_posts()
