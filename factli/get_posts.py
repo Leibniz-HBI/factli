@@ -62,13 +62,15 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         access_token = Access_Token.access_token
         
     if time_frame is not None:
-        d = datetime.datetime.now()
+        d = datetime.datetime.utcnow()
         current = d - datetime.timedelta(microseconds=d.microsecond)
         end_date = str(current.date()) + str("T") + str(current.time())
             
         
     else:
-        end_date = datetime.date.today()
+        b = datetime.datetime.utcnow()
+        c = b - datetime.timedelta(microseconds=d.microsecond)
+        end_date = str(c.date())
         start_date = end_date - datetime.timedelta(days=1)
     
 

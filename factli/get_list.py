@@ -3,7 +3,6 @@ import time
 import pandas as pd
 from datetime import date
 from loguru import logger
-import Access_Token
 import click
 
 
@@ -25,6 +24,7 @@ def lists(list_id, count, access_token):
                  Example(headers):   id(str), name(str), handle(str)......
     '''
     if access_token is None:
+        import Access_Token
         access_token = Access_Token.access_token
 
     all_accounts = pd.DataFrame(columns=[''])
