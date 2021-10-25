@@ -69,7 +69,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         
     else:
         b = datetime.datetime.utcnow()
-        c = b - datetime.timedelta(microseconds=d.microsecond)
+        c = b - datetime.timedelta(microseconds=b.microsecond)
         end_date = str(c.date())
         start_date = end_date - datetime.timedelta(days=1)
     
