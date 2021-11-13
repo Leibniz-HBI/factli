@@ -61,20 +61,12 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         import Access_Token
         access_token = Access_Token.access_token
         
-    if time_frame is not None:
-        d = datetime.datetime.utcnow()
-        current = d - datetime.timedelta(microseconds=d.microsecond)
-        end_date = str(current.date()) + str("T") + str(current.time())
+    
+    d = datetime.datetime.utcnow()
+    current = d - datetime.timedelta(microseconds=d.microsecond)
+    end_date = str(current.date()) + str("T") + str(current.time())
             
         
-    else:
-        b = datetime.datetime.utcnow()
-        c = b - datetime.timedelta(microseconds=b.microsecond)
-        end_date = c.date()
-        start_date = str(end_date - datetime.timedelta(days=1))
-        end_date = str(end_date)
-    
-
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
@@ -93,7 +85,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         logger.info(f"Starting Collection of {list_id}")
         
         if notify is not None:
-            send_mail(notify, "Hello", "Collection started", str1)
+            send_mail(notify, "Hello", f"Collection started of {list_id}", str1)
         
         @retry
         def get_page(query):
@@ -171,10 +163,11 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
             except KeyError:
                 logger.info(f"No next page, Collection finished for {list_id}")
                 os.chdir(f'{str0}/results/{list_id}')
-
-                with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                    dt = end_date.replace("T", " ")
-                    f.write(dt)
+                
+                if (status == 200):
+                    with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
+                        dt = end_date.replace("T", " ")
+                        f.write(dt)
                 
                 next_page_query = ''
 

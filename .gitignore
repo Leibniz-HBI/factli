@@ -148,3 +148,4 @@ gmail_creds.json.json
 gmail_creds.json.json:Zone.Identifier
 gmail_creds.json
 factli/demo.py
+factli/acc_info.py
