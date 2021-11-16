@@ -25,7 +25,7 @@ from loguru import logger
 @click.option('--sched', help='If given, waits "sched" hour(s) and then repeats.')
 @click.option('--notify', help='If given, notify email address in case of unexpected errors. Needs further setup. See README.')
 @click.option('--path', help='If given, stores the output at the desired location (Absolute Path needed)')
-def posts(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path, time_frame):
+def leaderboard(list_id, count, access_token, start_date, end_date, log_level, log_file, sched, notify, path, time_frame):
     '''
     This function generates individual folders containing posts from
     accounts (with information) for the given List ID.
@@ -49,13 +49,13 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         str0 = pathlib.Path.cwd()
 
     
-    pathlib.Path(f'results/{list_id}').mkdir(parents=True, exist_ok=True)
-    os.chdir(f'{str0}/results/{list_id}')
+    pathlib.Path(f'results/stats/{list_id}').mkdir(parents=True, exist_ok=True)
+    os.chdir(f'{str0}/results/stats/{list_id}')
 
     if access_token is None:
         import Access_Token
         access_token = Access_Token.access_token
-     
+        
     try:
         with open('last_list_saved_date.txt') as f:
             d = f.read()
@@ -67,6 +67,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         
     except FileNotFoundError:
         logger.error("File not created with the end date")
+        start_date = None
 
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
@@ -77,16 +78,14 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
     logger.add('errors.log', level='ERROR')
     logger.add('warnings.log', level='WARNING')
 
-    if start_date is not None:
-        query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&startDate={start_date}&endDate={end_date}&count={count}'
-    else:
-        query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&endDate={end_date}&timeframe={time_frame}&count={count}'
+
+    query = f'https://api.crowdtangle.com/leaderboard?token={access_token}&orderBy=desc&listId={list_id}&endDate={end_date}&startDate={start_date}&count={count}'
 
     def start_collection(query):
-        logger.info(f"Starting Post Collection of {list_id}")
+        logger.info(f"Starting Leaderboard Collection of {list_id}")
         
         if notify is not None:
-            send_mail(notify, "Hello", "Collection started", str1)
+            send_mail(notify, "Hello", f"Leaderboard Collection started of {list_id}", str1)
         
         @retry
         def get_page(query):
@@ -96,66 +95,52 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
                 logger.info(f"Fetching:{query}")
 
                 r = requests.get(query, timeout=10)
-                
+                status = r.status_code
                 json_response = r.json()
-                #logger.debug(json_response)
+                status = r.status_code
+                logger.info(status)
                 if (json_response['status'] == 429):
 
                     logger.info("API rate limit hit, sleeping...")
                     time.sleep(60)
                     return query
+                
+                
+                logger.info(status)
+                
 
                 normalized_json = pd.json_normalize(
-                    json_response['result']['posts'])
+                    json_response['result']['accountStatistics'])
                 data_frame = pd.DataFrame.from_dict(
                     normalized_json, orient="columns", dtype=str)
 
-                posts_count = len(data_frame)
-                logger.debug(posts_count)
+                accounts_count = len(data_frame)
+                logger.debug(accounts_count)
 
-                status = r.status_code
-                logger.info(status)
                 try:
                     assert status == 200
                 except AssertionError as e:
                     logger.warning(r.text)
                     raise e
+               
+                if(status == 200 and accounts_count != 0):
 
-                if(status == 200 and posts_count != 0):
+                    for i in range(accounts_count):
 
-                    for i in range(posts_count):
-
-                            x = str(json_response['result']['posts'][i-1]['account']['id'])
+                            x = str(json_response['result']['accountStatistics'][i-1]['account']['id'])
                             pathlib.Path(f'{x}').mkdir(exist_ok=True)
-                            os.chdir(f'{str0}/results/{list_id}/{x}')
-
-                            last_post_date = str(json_response['result']['posts'][i-1]['date'])
+                            os.chdir(f'{str0}/results/stats/{list_id}/{x}')
 
                             date = end_date[0:10]
 
                             with open(f'{date}.ndjson', 'a', encoding='utf8') as f:
-                                post = json_response['result']['posts'][i-1]
+                                stat = json_response['result']['accountStatistics'][i-1]
 
-                                post['written_at'] = str(datetime.datetime.now())
-
-                                json.dump(post, f, ensure_ascii=False)
+                                json.dump(stat, f, ensure_ascii=False)
                                 f.write("\n")
-                            
-                            with open('last_post_date.txt', 'w', encoding='utf8') as f:
-                                f.write(last_post_date)
 
-                            os.chdir(f'{str0}/results/{list_id}')
+                            os.chdir(f'{str0}/results/stats/{list_id}')
                     next_page_query = json_response['result']['pagination']['nextPage']
-
-                elif posts_count == 0:
-                    logger.info("No New Posts")
-                    os.chdir(f'{str0}/results/{list_id}')
-
-                    with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                        dt = end_date.replace("T", " ")
-                        f.write(dt)
-                    
-                    next_page_query = ''
 
                 else:
                     logger.warning("Other Status: ", status)
@@ -163,12 +148,12 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
 
             except KeyError:
                 logger.info(f"No next page, Collection finished for {list_id}")
-                os.chdir(f'{str0}/results/{list_id}')
-
+                os.chdir(f'{str0}/results/stats/{list_id}')
+                              
                 with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
                     dt = end_date.replace("T", " ")
                     f.write(dt)
-                
+            
                 next_page_query = ''
 
             return next_page_query
