@@ -82,7 +82,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
         query = f'https://api.crowdtangle.com/posts?token={access_token}&sortBy=oldest&listIds={list_id}&endDate={end_date}&timeframe={time_frame}&count={count}'
 
     def start_collection(query):
-        logger.info(f"Starting Collection of {list_id}")
+        logger.info(f"Starting Post Collection of {list_id}")
         
         if notify is not None:
             send_mail(notify, "Hello", f"Collection started of {list_id}", str1)
