@@ -55,18 +55,11 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
     if access_token is None:
         import Access_Token
         access_token = Access_Token.access_token
-        
-    if os.path.isfile('last_list_saved_date.txt'):
-        with open('last_list_saved_date.txt') as f:
-            d = f.read()
-            start_date = d.replace(" ", "T")
     
     d = datetime.datetime.utcnow()
     current = d - datetime.timedelta(microseconds=d.microsecond)
+    current -= datetime.timedelta(days=2)
     end_date = str(current.date()) + str("T") + str(current.time())
-
-    if start_date is None:
-        start_date = str(current - datetime.timedelta(days=1)) + str("T") + str(current.time())      
 
     logger.info(end_date, start_date)    
     if log_file is None:
@@ -79,7 +72,7 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
     logger.add('warnings.log', level='WARNING')
 
 
-    query = f'https://api.crowdtangle.com/leaderboard?token={access_token}&orderBy=desc&listId={list_id}&endDate={end_date}&startDate={start_date}&count={count}'
+    query = f'https://api.crowdtangle.com/leaderboard?token={access_token}&orderBy=desc&listId={list_id}&endDate={end_date}&count={count}'
 
     def start_collection(query):
         logger.info(f"Starting Leaderboard Collection of {list_id}")
@@ -150,11 +143,11 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
                 logger.info(f"No next page, Collection finished for {list_id}")
                 os.chdir(f'{str0}/results/stats/{list_id}')
                 
-                if (status == 200):
+                if status == 200:
                     with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
                         dt = end_date.replace("T", " ")
                         f.write(dt)
-                
+                    
                 next_page_query = ''
 
             return next_page_query
