@@ -151,7 +151,7 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
                 os.chdir(f'{str0}/results/stats/{list_id}')
                               
                 with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                    dt = end_date.replace("T", " ")
+                    dt = start_date.replace("T", " ")
                     f.write(dt)
             
                 next_page_query = ''
