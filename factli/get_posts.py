@@ -152,7 +152,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
                     os.chdir(f'{str0}/results/{list_id}')
 
                     with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                        dt = end_date.replace("T", " ")
+                        dt = start_date.replace("T", " ")
                         f.write(dt)
                     
                     next_page_query = ''
@@ -166,7 +166,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
                 os.chdir(f'{str0}/results/{list_id}')
 
                 with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                    dt = end_date.replace("T", " ")
+                    dt = start_date.replace("T", " ")
                     f.write(dt)
                 
                 next_page_query = ''

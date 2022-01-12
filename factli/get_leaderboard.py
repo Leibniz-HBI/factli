@@ -141,7 +141,7 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
 
                             os.chdir(f'{str0}/results/stats/{list_id}')
                     next_page_query = json_response['result']['pagination']['nextPage']
-
+                
                 else:
                     logger.warning("Other Status: ", status)
                     next_page_query = ''
