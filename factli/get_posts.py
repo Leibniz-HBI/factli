@@ -52,21 +52,22 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
     pathlib.Path(f'results/{list_id}').mkdir(parents=True, exist_ok=True)
     os.chdir(f'{str0}/results/{list_id}')
 
-    if os.path.isfile('last_list_saved_date.txt'):
-        with open('last_list_saved_date.txt') as f:
-            d = f.read()
-            start_date = d.replace(" ", "T")
-    
     if access_token is None:
         import Access_Token
         access_token = Access_Token.access_token
+     
+    try:
+        with open('last_list_saved_date.txt') as f:
+            d = f.read()
+            end_date = d.replace(" ", "T")
+        a = datetime.datetime.fromisoformat(end_date)
+        b = a.date() - datetime.timedelta(days=1)
+        start_date = f"{b}T{a.time()}"
+        end_date = f"{a.date()}T{a.time()}"
         
-    
-    d = datetime.datetime.utcnow()
-    current = d - datetime.timedelta(microseconds=d.microsecond)
-    end_date = str(current.date()) + str("T") + str(current.time())
-            
-        
+    except FileNotFoundError:
+        logger.error("File not created with the end date")
+
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
@@ -151,7 +152,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
                     os.chdir(f'{str0}/results/{list_id}')
 
                     with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                        dt = end_date.replace("T", " ")
+                        dt = start_date.replace("T", " ")
                         f.write(dt)
                     
                     next_page_query = ''
@@ -163,11 +164,10 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
             except KeyError:
                 logger.info(f"No next page, Collection finished for {list_id}")
                 os.chdir(f'{str0}/results/{list_id}')
-                
-                if (status == 200):
-                    with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                        dt = end_date.replace("T", " ")
-                        f.write(dt)
+
+                with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
+                    dt = start_date.replace("T", " ")
+                    f.write(dt)
                 
                 next_page_query = ''
 

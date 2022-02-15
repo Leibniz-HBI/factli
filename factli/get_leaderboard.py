@@ -55,13 +55,20 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
     if access_token is None:
         import Access_Token
         access_token = Access_Token.access_token
-    
-    d = datetime.datetime.utcnow()
-    current = d - datetime.timedelta(microseconds=d.microsecond)
-    current -= datetime.timedelta(days=2)
-    end_date = str(current.date()) + str("T") + str(current.time())
+        
+    try:
+        with open('last_list_saved_date.txt') as f:
+            d = f.read()
+            end_date = d.replace(" ", "T")
+        a = datetime.datetime.fromisoformat(end_date)
+        b = a.date() - datetime.timedelta(days=1)
+        start_date = f"{b}T{a.time()}"
+        end_date = f"{a.date()}T{a.time()}"
+        
+    except FileNotFoundError:
+        logger.error("File not created with the end date")
+        start_date = None
 
-    logger.info(end_date, start_date)    
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
@@ -72,7 +79,7 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
     logger.add('warnings.log', level='WARNING')
 
 
-    query = f'https://api.crowdtangle.com/leaderboard?token={access_token}&orderBy=desc&listId={list_id}&endDate={end_date}&count={count}'
+    query = f'https://api.crowdtangle.com/leaderboard?token={access_token}&orderBy=desc&listId={list_id}&endDate={end_date}&startDate={start_date}&count={count}'
 
     def start_collection(query):
         logger.info(f"Starting Leaderboard Collection of {list_id}")
@@ -134,7 +141,7 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
 
                             os.chdir(f'{str0}/results/stats/{list_id}')
                     next_page_query = json_response['result']['pagination']['nextPage']
-
+                
                 else:
                     logger.warning("Other Status: ", status)
                     next_page_query = ''
@@ -142,12 +149,11 @@ def leaderboard(list_id, count, access_token, start_date, end_date, log_level, l
             except KeyError:
                 logger.info(f"No next page, Collection finished for {list_id}")
                 os.chdir(f'{str0}/results/stats/{list_id}')
-                
-                if status == 200:
-                    with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
-                        dt = end_date.replace("T", " ")
-                        f.write(dt)
-                    
+                              
+                with open('last_list_saved_date.txt', 'w', encoding='utf8') as f:
+                    dt = start_date.replace("T", " ")
+                    f.write(dt)
+            
                 next_page_query = ''
 
             return next_page_query
