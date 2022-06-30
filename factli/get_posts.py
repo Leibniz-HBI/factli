@@ -59,15 +59,16 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
     try:
         with open('last_list_saved_date.txt') as f:
             d = f.read()
-            end_date = d.replace(" ", "T")
-        a = datetime.datetime.fromisoformat(end_date)
-        b = a.date() - datetime.timedelta(days=1)
-        start_date = f"{b}T{a.time()}"
-        end_date = f"{a.date()}T{a.time()}"
+            start_date = d.replace(" ", "T")
         
     except FileNotFoundError:
         logger.error("File not created with the end date")
 
+    d = datetime.datetime.utcnow()
+    current = d - datetime.timedelta(microseconds=d.microsecond)
+    current -= datetime.timedelta(days=2)
+    end_date = str(current.date()) + str("T") + str(current.time())
+    
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
@@ -133,7 +134,7 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
 
                             date = end_date[0:10]
 
-                            with open(f'{date}.ndjson', 'a', encoding='utf8') as f:
+                            with open(f'{x}.ndjson', 'a', encoding='utf8') as f:
                                 post = json_response['result']['posts'][i-1]
 
                                 post['written_at'] = str(datetime.datetime.now())
