@@ -125,25 +125,18 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
                 if(status == 200 and posts_count != 0):
 
                     for i in range(posts_count):
-
-                            x = str(json_response['result']['posts'][i-1]['account']['id'])
-                            pathlib.Path(f'{x}').mkdir(exist_ok=True)
-                            os.chdir(f'{str0}/results/{list_id}/{x}')
-
+                            
                             last_post_date = str(json_response['result']['posts'][i-1]['date'])
 
                             date = end_date[0:10]
 
-                            with open(f'{x}.ndjson', 'a', encoding='utf8') as f:
+                            with open(f'{date}.ndjson', 'a', encoding='utf8') as f:
                                 post = json_response['result']['posts'][i-1]
 
                                 post['written_at'] = str(datetime.datetime.now())
 
                                 json.dump(post, f, ensure_ascii=False)
                                 f.write("\n")
-                            
-                            with open('last_post_date.txt', 'w', encoding='utf8') as f:
-                                f.write(last_post_date)
 
                             os.chdir(f'{str0}/results/{list_id}')
                     next_page_query = json_response['result']['pagination']['nextPage']
