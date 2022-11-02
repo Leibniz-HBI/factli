@@ -132,7 +132,7 @@ dmypy.json
 # Project specific stuff
 dest/
 data
-results
+results*/
 Access_Token.py
 Facebook/demo1.py
 
@@ -149,3 +149,6 @@ gmail_creds.json.json:Zone.Identifier
 gmail_creds.json
 factli/demo.py
 factli/acc_info.py
+
+*.csv
+*.code-workspace
