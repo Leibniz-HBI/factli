@@ -64,11 +64,12 @@ def posts(list_id, count, access_token, start_date, end_date, log_level, log_fil
     except FileNotFoundError:
         logger.error("File not created with the end date")
 
-    d = datetime.datetime.utcnow()
-    current = d - datetime.timedelta(microseconds=d.microsecond)
-    current -= datetime.timedelta(days=2)
-    end_date = str(current.date()) + str("T") + str(current.time())
-    
+    if end_date is None:
+        d = datetime.datetime.utcnow()
+        current = d - datetime.timedelta(microseconds=d.microsecond)
+        current -= datetime.timedelta(days=2)
+        end_date = str(current.date()) + str("T") + str(current.time())
+
     if log_file is None:
         logger.add(sys.stdout, level=log_level)
     else:
