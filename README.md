@@ -1,4 +1,4 @@
-# DBoeS-stats
+# Factli
 Collectors of reputation metrics of public speakers in social media platforms 
 
 ### About
