@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "factli"
 version = "0.2.0"
-description = "A Facebook Crowdtangle Client"
+description = "A Crowdtangle Client"
 authors = [
 	"Aditya Kumar <a.kumar@leibniz-hbi.de>",
 	"Felix Victor Münch <f.muench@leibniz-hbi.de>",
