@@ -4,11 +4,13 @@ version = "0.2.0"
 description = "A Facebook Crowdtangle Client"
 authors = [
 	"Aditya Kumar <a.kumar@leibniz-hbi.de>",
-	"Felix Victor Münch <f.muench@leibniz-hbi.de>"
+	"Felix Victor Münch <f.muench@leibniz-hbi.de>",
+ 	"Gregor Wiedemann <g.wiedemann@leibniz-hbi.de>",
+  	"Philipp Kessling <p.kessling@leibniz-hbi.de>"
 	]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/Leibniz-HBI/DBoeS-stats"
+repository = "https://github.com/Leibniz-HBI/factli"
 
 exclude = [
 		"Facebook/Access_Token.py",
