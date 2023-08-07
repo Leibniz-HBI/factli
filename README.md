@@ -4,7 +4,7 @@ Collectors of reputation metrics of public speakers in social media platforms
 ### About
 
 1. Collects posts of accounts and creates individual folders containing JSON response for every account (get_posts.py). 
-2. Collects content from CrowdTangle and creates CSV files containing the statistics of facebook pages (get_list.py). 
+2. Collects content from CrowdTangle and creates CSV files containing the statistics of facebook/instagram pages (get_list.py). 
 
 ### Storing API Access Token 
 
