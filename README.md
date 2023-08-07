@@ -3,14 +3,12 @@ Collectors of reputation metrics of public speakers in social media platforms
 
 ### About
 
-The Facebook directory-
-
-1. extracts posts of accounts and creates individual folders containing JSON response for every account (get_posts.py). 
-2. extracts content from CrowdTangle and creates CSV files containing the statistics of facebook pages (get_list.py). 
+1. Collects posts of accounts and creates individual folders containing JSON response for every account (get_posts.py). 
+2. Collects content from CrowdTangle and creates CSV files containing the statistics of facebook pages (get_list.py). 
 
 ### Storing API Access Token 
 
-Store your API access token in a python file, name it Access_Token.py and save it in the DBoeS-stats directory.
+Store your API access token in a python file, name it Access_Token.py and save it in the factli directory.
 In the file store the access token as:
 ```
 access_token = "API access token generated from your crowd tangle account"
@@ -27,7 +25,7 @@ access_token = "API access token generated from your crowd tangle account"
 To clone this repository type:
 
 ```
-git clone https://github.com/Leibniz-HBI/DBoeS-stats.git
+git clone https://github.com/Leibniz-HBI/factli.git
 ```
 ### Usage
 ```
